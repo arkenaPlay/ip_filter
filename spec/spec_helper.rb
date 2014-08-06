@@ -23,10 +23,10 @@ IpFilter::Configuration.ip_code_type = "country_code2"
 IpFilter::Configuration.ip_codes = Proc.new { ["country_code2"]}
 
 # Whitelist of IPs
-IpFilter::Configuration.ip_whitelist = Proc.new { ["127.0.0.1/24"] } 
+IpFilter::Configuration.ip_whitelist = Proc.new { ["127.0.0.1/24"] }
 
 # Exception to throw when IP is NOT allowed.
-# Accepts a Proc for fine-grain control of the appropriate response. 
+# Accepts a Proc for fine-grain control of the appropriate response.
 IpFilter::Configuration.ip_exception = Proc.new { raise Exception.new('GeoIP: IP is not in whitelist') }
 
 # Cache object (Memcache only).
@@ -36,7 +36,7 @@ IpFilter::Configuration.cache = {}
 
 def action_call(controller, action, opts)
 
-  env = Rack::MockRequest.env_for('/', 'REMOTE_ADDR' => opts[:ip] || '127.0.0.1')
+  env = Rack::MockRequest.env_for('/', 'REMOTE_ADDR' => opts[:ip] || '127.0.0.1', 'HTTP_X_FORWARDED_FOR' => opts[:x_forward])
   status, headers, body = controller.action(action).call(env)
   response = ActionDispatch::TestResponse.new(status, headers, body)
 end

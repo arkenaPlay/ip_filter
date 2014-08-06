@@ -28,7 +28,7 @@ module IpFilter
     ip_code_type   = Configuration.ip_code_type.to_sym
     valid_ip_codes = Configuration.ip_codes.call
     ip_code        = request.location[ip_code_type]
-    ip             = request.remote_ip
+    ip             = request.remote_first_ip
     perform_check  = Configuration.allow_loopback ? (ip_code != "N/A") : true
 
     if perform_check
@@ -57,9 +57,9 @@ private
     !!value.to_s.match(/^\s*$/)
   end
 
-  # Go through each IP/IP range and validate IP against it 
+  # Go through each IP/IP range and validate IP against it
   def valid_ip?(ip)
-    Array.wrap(Configuration.ip_whitelist.call).any? do |ip_range| 
+    Array.wrap(Configuration.ip_whitelist.call).any? do |ip_range|
       IPAddr.new(ip_range).include?(ip)
     end
   end
